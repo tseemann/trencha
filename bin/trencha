@@ -1,0 +1,35 @@
+#!/usr/bin/env perl
+use 5.26.0;
+use strict;
+use FindBin;
+use lib "$FindBin::RealBin/../perl5";
+use Biotool::Getopt;
+use Biotool::Logger;
+use Biotool::Binaries;
+use Data::Dumper;
+
+sub main {
+  my $opt = Biotool::Getopt->getopt( 
+  {
+    name => 'trencha',
+    version => '0.0.2',
+    desc => 'Computed normalized DP tags in VCF files',
+    author => 'Torsten Seemann',
+    url => 'https://github.com/tseemann/trencha',
+  },
+  {
+    vcf => { type=>'ifile', need=>1, desc=>"Original VCF file" },
+    ref => { type=>'ifile', need=>1, desc=>"Reference genome (FASTA)" },
+    bam => { type=>'ifile', need=>0, desc=>"BAM file that VCF was generated from" },
+    k   => { type=>'int', default=>5, need=>1, desc=>"K-mer size for estimating bias" },
+  },
+  );
+
+  print Dumper($opt);
+
+  require_exe($_) for qw(samtools bcftools);
+  #return if $opt->{check};
+}
+
+exit main(@ARGV);
+
